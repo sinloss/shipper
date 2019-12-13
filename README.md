@@ -1,12 +1,12 @@
 # Shipper ships binary files as a go source file
 
 It is espically used for shipping dynamic libraries and executables which
-needs to get restored to local file system.
+needs to get restored to the local file system.
 
 After intallation via `go get -u github.com/sinloss/shipper`, you could use
 `shipper` to do the shipping.
 
-The usage ara as follows:
+The usage is as follows:
 ```
 Usage: shipper [options] <dir> <dest-file> [includes-without-gzip] [-- <includes-with-gzip>]
   Includes are comma seperated file paths in `dir`, wildcards are supportted. If there are
