@@ -31,19 +31,26 @@ func (as Assets) Restore(names ...string) error {
 	return nil
 }
 
+func ckdir(dir string) error {
+	// check directory
+	if stat, err := os.Stat(dir); err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+		os.MkdirAll(dir, 0666)
+	} else if !stat.IsDir() {
+		return errors.New("a same name non-folder file exists")
+	}
+	return nil
+}
+
 // RestoreAs restores the underlying contents to the given dest path
 func (as Assets) RestoreAs(name string, dest string) error {
 	content := as[name]
 	if content.Bytes != nil {
 		// check directory
-		dir := filepath.Dir(dest)
-		if stat, err := os.Stat(dir); err != nil {
-			if !os.IsNotExist(err) {
-				return err
-			}
-			os.MkdirAll(dir, 0666)
-		} else if !stat.IsDir() {
-			return errors.New("a same name non-folder file exists")
+		if err := ckdir(filepath.Dir(dest)); err != nil {
+			return err
 		}
 
 		f, err := os.Create(dest)

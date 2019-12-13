@@ -77,8 +77,8 @@ func parse() (shipper.Meta, string) {
 		}
 	}
 	if len(meta.Includes) == 0 {
-		meta.Includes = append(meta.Includes, 
-				shipper.Include{Filename: "*", Gziped: false})
+		meta.Includes = append(meta.Includes,
+			shipper.Include{Filename: "*", Gziped: false})
 	}
 	return meta, destfile
 }

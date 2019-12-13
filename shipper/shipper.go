@@ -113,6 +113,10 @@ func Ship(meta Meta, destfile string) error {
 		return errors.New("invalid directory")
 	}
 
+	// check dest file's directory
+	if err := ckdir(filepath.Dir(destfile)); err != nil {
+		return err
+	}
 	// create output file
 	dest, err := os.Create(destfile)
 	if err != nil {
