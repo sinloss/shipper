@@ -54,7 +54,7 @@ import (
 )
 
 // {{cap .VarName}} is the Asset
-var {{cap .VarName}} = shipper.Assets{
+var {{cap .VarName}} = &shipper.Assets{
 `))
 
 // EntryStart moulds the start part of an asset entry
@@ -122,6 +122,8 @@ func Ship(meta Meta, destfile string) error {
 	if err != nil {
 		return err
 	}
+	defer dest.Close()
+	wo := &w{dest}
 
 	fore.Execute(dest, meta)
 
@@ -148,9 +150,9 @@ func Ship(meta Meta, destfile string) error {
 				} else {
 					entryStart.Execute(dest, Include{Filename: path.Join(dir, filename), Gziped: include.Gziped})
 					if include.Gziped {
-						Gzip(dest, buf[:n])
+						Gzip(wo, buf[:n])
 					} else {
-						dest.Write(buf[:n])
+						wo.Write(buf[:n])
 					}
 					entryEnd.Execute(dest, nil)
 				}

@@ -15,22 +15,6 @@ type Content struct {
 // Assets maps a file's name to its content
 type Assets map[string]Content
 
-// Restore restores the underlying contents to the current working directory
-// with its original name
-func (as Assets) Restore(names ...string) error {
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	for _, name := range names {
-		err := as.RestoreAs(name, filepath.Join(wd, name))
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func ckdir(dir string) error {
 	// check directory
 	if stat, err := os.Stat(dir); err != nil {
@@ -44,9 +28,25 @@ func ckdir(dir string) error {
 	return nil
 }
 
+// Restore restores the underlying contents to the current working directory
+// with its original name
+func (as *Assets) Restore(names ...string) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		err := as.RestoreAs(name, filepath.Join(wd, name))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // RestoreAs restores the underlying contents to the given dest path
-func (as Assets) RestoreAs(name string, dest string) error {
-	content := as[name]
+func (as *Assets) RestoreAs(name string, dest string) error {
+	content := (*as)[name]
 	if content.Bytes != nil {
 		// check directory
 		if err := ckdir(filepath.Dir(dest)); err != nil {
@@ -57,6 +57,7 @@ func (as Assets) RestoreAs(name string, dest string) error {
 		if err != nil {
 			return err
 		}
+		defer f.Close()
 
 		data := content.Bytes
 		if content.Gziped {

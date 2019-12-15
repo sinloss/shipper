@@ -2,4 +2,7 @@
 __debug_bin
 /*.exe
 /generator/winpty
-helloshipper.go
+
+# test generated files
+bonjour
+foooobaaar

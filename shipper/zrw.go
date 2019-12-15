@@ -14,13 +14,13 @@ type w struct {
 }
 
 // Gzip compresses the given bytes
-func Gzip(f *os.File, p []byte) (n int, err error) {
-	zw := gzip.NewWriter(&w{f})
+func Gzip(wo *w, p []byte) (n int, err error) {
+	zw := gzip.NewWriter(wo)
 	defer zw.Close()
 	return zw.Write(p)
 }
 
-func (w *w) Write(p []byte) (n int, err error) {
+func (wo *w) Write(p []byte) (n int, err error) {
 	hex := make([]byte, len(p)*4)
 	j := 0
 	for _, b := range p {
@@ -28,7 +28,7 @@ func (w *w) Write(p []byte) (n int, err error) {
 		hex[j+2], hex[j+3] = util.Hexchar(b)
 		j += 4
 	}
-	return w.f.Write(hex)
+	return wo.f.Write(hex)
 }
 
 // UnGzip uncompresses the given gz format bytes
