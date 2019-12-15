@@ -28,7 +28,7 @@ execute `shipper helloworld helloworld.go *o -- *.bar` or use go generate
 //go:generate go get -u github.com/sinloss/shipper
 //go:generate go run github.com/sinloss/shipper helloworld helloworld.go *o -- *.bar
 ```
-on the following files
+on the following files which is provided as the [/helloworld](https://github.com/sinloss/shipper/tree/master/helloworld) folder of this repo.
 ```
  ┌───────────────────┬─────────┐
  │ FILESYSTEM        │ CONTENT │
@@ -67,7 +67,11 @@ var A = &shipper.Assets{
 	},
 }
 ```
-The file could be restored using it's facility function [Restore](https://github.com/sinloss/shipper/blob/c5c9c02a4d7d111a06136ab75bedbf16db955d42/shipper/facility.go#L20) or [RestoreAs](https://github.com/sinloss/shipper/blob/c5c9c02a4d7d111a06136ab75bedbf16db955d42/shipper/facility.go#L48)
+which is also provided as [/shipped/helloworld.go](https://github.com/sinloss/shipper/blob/master/shipped/helloworld.go) in this repo yet with an additional flag `-p shipped` thus has the different package clause
+
+# Restore
+
+The files could be restored using it's facility function `Restore` or `RestoreAs` defined in [/shipper/facility.go](https://github.com/sinloss/shipper/blob/master/shipper/facility.go). You could refer to [/ship_test.go](https://github.com/sinloss/shipper/blob/master/ship_test.go) for sample codes.
 
 # Gzip / UnGzip supported
 
