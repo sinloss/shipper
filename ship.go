@@ -65,21 +65,25 @@ func parse() (shipper.Meta, string) {
 	}
 
 	for _, include := range includes {
-		if include != "" {
-			meta.Includes = append(meta.Includes,
-				shipper.Include{Filename: include, Gziped: false})
+		err := meta.Including(include, false)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 	for _, include := range gzincludes {
-		if include != "" {
-			meta.Includes = append(meta.Includes,
-				shipper.Include{Filename: include, Gziped: true})
+		err := meta.Including(include, true)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
+	// if no include pattern is given use the default pattern
 	if len(meta.Includes) == 0 {
-		meta.Includes = append(meta.Includes,
-			shipper.Include{Filename: "*", Gziped: false})
+		err := meta.Including("*", false)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
+
 	return meta, destfile
 }
 

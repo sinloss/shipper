@@ -7,15 +7,17 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"unicode"
 
-	"github.com/sinloss/shipper/util"
+	"github.com/sinloss/shipper/wildcard"
 )
 
 // Include carries the useful data of the included files
 type Include struct {
 	Filename string
+	Wc       *wildcard.FA
 	Gziped   bool
 }
 
@@ -88,6 +90,24 @@ func traverse(root string, dir string, callback func(string, string, string)) er
 	return nil
 }
 
+// Including adds a suit of include to the includes array
+func (meta *Meta) Including(filename string, gziped bool) error {
+	if filename == "" {
+		return nil
+	}
+
+	fa, err := wildcard.Compile([]rune(
+		strings.ReplaceAll(
+			filepath.Join(meta.Dir, filename), "\\", "\\\\")))
+	if err != nil {
+		return err
+	}
+
+	meta.Includes = append(meta.Includes,
+		Include{Filename: filename, Wc: fa, Gziped: gziped})
+	return nil
+}
+
 // Ship ships the given set of files to a destfile
 func Ship(meta Meta, destfile string) error {
 	// check meta validity
@@ -132,7 +152,7 @@ func Ship(meta Meta, destfile string) error {
 		for _, include := range meta.Includes {
 			// check file path
 			fullpath := filepath.Join(root, dir, filename)
-			if !util.WcMatch(fullpath, filepath.Join(meta.Dir, include.Filename)) {
+			if !include.Wc.Search([]rune(fullpath), true).AllMatching() {
 				continue
 			}
 			// open file
