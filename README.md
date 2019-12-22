@@ -77,6 +77,10 @@ The files could be restored using it's facility function `Restore` or `RestoreAs
 
 Yes, supported.
 
-# The generated file is simple
+# The O(M+N) wildcard searching
 
-As simple as a map declaration. As all the functionality are defined as normal member functions (**see** */shipper/shipper/facility.go*) it could be easy to extend it's functionality in the future.
+The wildcard searching technique is based on the `Knuth Morris Pratt DFA` substring matching algorithm. The original `Knuth Morris Pratt DFA` only deal with exact characters, and would not be able to deal with wildcards. And the wildcard searching algorithm in this repo on the other hand supported the wildcards and also greedy matching by took advantage of the `x` restart state, and dynamically evolve it when dealing with `?` wildcard to avoid the great time/space cost of building a `DFA` on all the possibilities of this undetermined `?`. As for `*`, it could be simply treated as a starting state shifted to the next character following it. 
+
+This wildcard searching technique also introduced a **state based** data structure instead of the original **character based** which has a great space cost and underlying corresponding time cost proportional to the size of the alphabet. So that it could used an `any` key to represents all the other characters thus reduce the space and time cost.
+
+To use this wildcard util in other places, one could `import "github.com/sinloss/shipper/wildcard"`. The examples of matching `[]rune` and `<-chan rune` lay in the [/wildcard/wildcard_test.go](https://github.com/sinloss/shipper/blob/master/wildcard/wildcard_test.go). Please take a look if you are interested.
